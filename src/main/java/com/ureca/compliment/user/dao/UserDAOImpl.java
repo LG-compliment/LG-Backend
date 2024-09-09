@@ -18,6 +18,38 @@ public class UserDAOImpl implements UserDAO{
     DBUtil dbUtil;
 
     @Override
+    public User selectUserByIdAndPassword(String id, String password) throws SQLException, UserNotFoundException {
+        Connection connection = dbUtil.getConnection();
+
+        String sql = """
+            SELECT
+                *
+            FROM USER
+            WHERE id = ? AND password = ?;
+        """;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, id);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return new User(
+                        resultSet.getString("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getDate("created_at"),
+                        resultSet.getDate("updated_at")
+                );
+            } else {
+                throw new UserNotFoundException("User with ID" + id + " not found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public User selectUserById(String id) throws SQLException, UserNotFoundException {
         Connection connection = dbUtil.getConnection();
 

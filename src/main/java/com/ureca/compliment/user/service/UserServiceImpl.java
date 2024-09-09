@@ -17,8 +17,13 @@ public class UserServiceImpl implements UserService {
     UserDAO dao;
 
     @Override
-    public void logIn(String id, String password) throws SQLException{
-
+    public Optional<User> logIn(String id, String password) throws SQLException{
+        try {
+            User user = dao.selectUserByIdAndPassword(id, password);
+            return Optional.of(user);
+        } catch (UserNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
