@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -83,7 +84,33 @@ public class UserDAOImpl implements UserDAO{
     }
 
     @Override
-    public List<User> selectAllUsers() {
-        return List.of();
+    public List<User> selectAllUsers() throws SQLException {
+        Connection connection = dbUtil.getConnection();
+
+        String sql = """
+            SELECT
+                *
+            FROM USER;
+        """;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(new User(
+                        resultSet.getString("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getDate("created_at"),
+                        resultSet.getDate("updated_at")
+                ));
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return null;
     }
 }

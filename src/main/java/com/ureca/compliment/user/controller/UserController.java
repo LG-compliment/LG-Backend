@@ -18,6 +18,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @GetMapping()
+    public ResponseEntity<?> getAllUsers() throws SQLException {
+        return ResponseEntity.ok().body(userService.getAllUsers());
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUser(
             @PathVariable("userId") String id

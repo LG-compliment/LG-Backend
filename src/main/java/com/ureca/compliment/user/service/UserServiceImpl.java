@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() throws SQLException{
-        return List.of();
+    public List<User> getAllUsers() throws SQLException {
+        return dao.selectAllUsers();
     }
 
     @Override
