@@ -15,11 +15,11 @@ CREATE TABLE compliment (
                             content TEXT NOT NULL,
                             is_anonymous BOOLEAN NOT NULL DEFAULT FALSE,
                             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                            FOREIGN KEY (sender_id) REFERENCES users(id),
-                            FOREIGN KEY (receiver_id) REFERENCES users(id)
+                            FOREIGN KEY (sender_id) REFERENCES user(id),
+                            FOREIGN KEY (receiver_id) REFERENCES user(id)
 );
 
 -- 인덱스 생성 (성능 최적화)
-CREATE INDEX idx_compliments_sender ON compliments(sender_id);
-CREATE INDEX idx_compliments_receiver ON compliments(receiver_id);
-CREATE INDEX idx_compliments_created_at ON compliments(created_at);
+CREATE INDEX idx_compliment_sender ON compliment(sender_id);
+CREATE INDEX idx_compliment_receiver ON compliment(receiver_id);
+CREATE INDEX idx_compliment_created_at ON compliment(created_at);
