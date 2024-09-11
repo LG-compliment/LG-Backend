@@ -4,11 +4,14 @@ import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.user.User;
 import com.ureca.compliment.user.dao.UserDAO;
 import com.ureca.compliment.user.exceptions.UserNotFoundException;
+
+import com.ureca.compliment.util.auth.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -16,13 +19,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDAO dao;
 
+    @Autowired
+    TokenService tokenService;
+
     @Override
-    public Optional<User> logIn(String id, String password) throws SQLException{
+    public Map<String, Object> logIn(String id, String password) throws SQLException{
         try {
-            User user = dao.selectUserByIdAndPassword(id, password);
-            return Optional.of(user);
-        } catch (UserNotFoundException e) {
-            return Optional.empty();
+            Map<String, Object> response = new java.util.HashMap<>();
+
+            String token =  tokenService.generateToken(id, password);
+            response.put("token", token);
+            return response;
+        } catch (Exception e) {
+            throw new SQLException("Invalid credentials");
         }
     }
 
