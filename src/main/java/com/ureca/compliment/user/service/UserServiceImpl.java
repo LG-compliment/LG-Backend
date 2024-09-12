@@ -36,8 +36,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllUsers() throws SQLException {
-        return dao.selectAllUsers();
+    public Map<String, Object> getAllUsers() throws SQLException {
+        Map<String, Object> response = new java.util.HashMap<>();
+
+        List<User> users = dao.selectAllUsers();
+        response.put("users", users);
+        return response;
     }
 
     @Override
