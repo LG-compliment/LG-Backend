@@ -34,7 +34,13 @@ public class UserController {
     public ResponseEntity<?> getUser(
             @PathVariable("userId") String id
     ) throws UserNotFoundException, SQLException {
-        return ResponseEntity.ok().body(userService.getUser(id));
+        Map<String, Object> data = userService.getUser(id);
+        ResponseWrapper<Map<String, Object>> response = new ResponseWrapper<>(
+                String.valueOf(HttpStatus.OK.value()),  // Status code as a string
+                HttpStatus.OK.getReasonPhrase(),  // "OK"
+                data  // Data from userService
+        );
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/login")

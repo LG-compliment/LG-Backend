@@ -45,14 +45,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUser(String id) throws SQLException, UserNotFoundException {
-        try {
+    public Map<String, Object> getUser(String id) throws SQLException, UserNotFoundException {
             User user = dao.selectUserById(id);
-            return Optional.of(user);
-        } catch (UserNotFoundException e) {
-            return Optional.empty();
-        }
-
+            Map<String, Object> response = new java.util.HashMap<>();
+            response.put("name", user.getName());
+            return response;
     }
 
     @Override
