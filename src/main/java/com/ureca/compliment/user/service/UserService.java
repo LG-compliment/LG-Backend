@@ -12,6 +12,6 @@ import java.util.Optional;
 public interface UserService {
     Map<String, Object> logIn(String id, String password) throws SQLException;
     Map<String, Object> getAllUsers() throws SQLException;
-    Optional<User> getUser(String id) throws SQLException, UserNotFoundException;
+    Map<String, Object> getUser(String id) throws SQLException, UserNotFoundException;
     List<Compliment> getCompliments(String id) throws SQLException;
 }
