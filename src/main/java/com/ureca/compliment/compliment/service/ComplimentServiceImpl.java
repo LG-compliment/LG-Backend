@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,4 +25,14 @@ public class ComplimentServiceImpl implements ComplimentService{
         response.put("insert", insert);
         return response;
     }
+
+    @Override
+    public Map<String,  Object> senderList(String senderId, String date) throws SQLException {
+        Map<String, Object> response = new HashMap<>();
+        List<Compliment> senderList = dao.senderList(senderId, date);
+        response.put("list", senderList);
+        return response;
+    }
+
+    
 }

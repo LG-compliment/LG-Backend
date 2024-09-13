@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface ComplimentService {
     Map<String, Integer> create(Compliment compliment) throws SQLException;
+    Map<String, Object> senderList(String senderId, String date) throws SQLException;
 }

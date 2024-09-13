@@ -8,7 +8,10 @@ import com.ureca.compliment.util.DBUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ComplimentDAOImpl implements ComplimentDAO{
@@ -40,5 +43,37 @@ public class ComplimentDAOImpl implements ComplimentDAO{
             connection.close();
         }
         return result;
+    }
+
+    @Override
+    public List<Compliment> senderList(String senderId, String date) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+        String sql = """
+            SELECT * FROM COMPLIMENT WHERE SENDER_ID = ?
+            AND DATE(CREATED_AT) = ?;
+        """;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, senderId);
+            preparedStatement.setString(2, date);
+            ResultSet resultSet =  preparedStatement.executeQuery();
+            List<Compliment> compliments = new ArrayList<>();
+            while(resultSet.next()){
+                compliments.add(new Compliment(
+                    resultSet.getString("id"),
+                    resultSet.getString("sender_id"),
+                    resultSet.getString("receiver_id"),
+                    resultSet.getString("content"),
+                    resultSet.getBoolean("is_anonymous") 
+                ));
+            }
+            return compliments;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return null;
     }
 }
