@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/compliments")
@@ -21,8 +22,8 @@ public class ComplimentController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody Compliment compliment) throws SQLException{
-        int data = service.create(compliment);
-        ResponseWrapper<Integer> response = new ResponseWrapper<>(
+        Map<String, Integer> data = service.create(compliment);
+        ResponseWrapper<Map<String, Integer>> response = new ResponseWrapper<>(
                 String.valueOf(HttpStatus.OK.value()),  // Status code as a string
                 HttpStatus.OK.getReasonPhrase(),  // "OK"
                 data

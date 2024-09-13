@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -14,8 +16,12 @@ public class ComplimentServiceImpl implements ComplimentService{
     ComplimentDAO dao;
 
     @Override
-    public int create(Compliment compliment) throws SQLException {
+    public Map<String, Integer> create(Compliment compliment) throws SQLException {
         compliment.setId(UUID.randomUUID().toString());
-        return dao.insertComplimnet(compliment);
+        
+        Map<String, Integer> response = new HashMap<>();
+        int insert = dao.insertComplimnet(compliment);
+        response.put("insert", insert);
+        return response;
     }
 }
