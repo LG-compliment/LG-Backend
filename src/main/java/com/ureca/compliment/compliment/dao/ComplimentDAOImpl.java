@@ -64,7 +64,7 @@ public class ComplimentDAOImpl implements ComplimentDAO{
                     resultSet.getString("sender_id"),
                     resultSet.getString("receiver_id"),
                     resultSet.getString("content"),
-                    resultSet.getBoolean("is_anonymous") 
+                    resultSet.getBoolean("is_anonymous")
                 ));
             }
             return compliments;

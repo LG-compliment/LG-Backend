@@ -9,6 +9,7 @@ public class Compliment {
     private String content;
     private boolean isAnonymous;
     private LocalDateTime createdAt;
+    private String date;
 
     public Compliment(String id, String senderId, String receiverId, String content, boolean isAnonymous) {
         this.id = id;
@@ -64,5 +65,13 @@ public class Compliment {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

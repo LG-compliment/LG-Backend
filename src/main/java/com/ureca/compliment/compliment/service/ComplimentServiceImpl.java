@@ -2,14 +2,12 @@ package com.ureca.compliment.compliment.service;
 
 import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.compliment.dao.ComplimentDAO;
+import com.ureca.compliment.compliment.exceptions.ComplimentAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ComplimentServiceImpl implements ComplimentService{
@@ -17,7 +15,14 @@ public class ComplimentServiceImpl implements ComplimentService{
     ComplimentDAO dao;
 
     @Override
-    public Map<String, Integer> create(Compliment compliment) throws SQLException {
+    public Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException {
+        List<Compliment> senderList = dao.senderList(compliment.getSenderId(), compliment.getDate());
+
+        if (!senderList.isEmpty()) {
+            throw new ComplimentAlreadyExistsException("Compliment already exists for this sender on this date");
+        }
+
+
         compliment.setId(UUID.randomUUID().toString());
         
         Map<String, Integer> response = new HashMap<>();
