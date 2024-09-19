@@ -20,7 +20,7 @@ public class ComplimentController {
     ComplimentService service;
 
     @PostMapping("")
-    public ResponseEntity<?> create(@RequestBody Compliment compliment, String date) throws SQLException{
+    public ResponseEntity<?> create(@RequestBody Compliment compliment) throws SQLException{
 
         try {
             Map<String, Integer> data = service.create(compliment);
