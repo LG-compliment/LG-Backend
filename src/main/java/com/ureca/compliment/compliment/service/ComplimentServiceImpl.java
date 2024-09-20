@@ -16,7 +16,7 @@ public class ComplimentServiceImpl implements ComplimentService{
 
     @Override
     public Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException {
-        List<Compliment> senderList = dao.senderList(compliment.getSenderId(), compliment.getDate());
+        List<Compliment> senderList = dao.senderList(compliment.getSenderId(), compliment.getCreatedAt());
 
         if (!senderList.isEmpty()) {
             throw new ComplimentAlreadyExistsException("Compliment already exists for this sender on this date");
@@ -32,7 +32,7 @@ public class ComplimentServiceImpl implements ComplimentService{
     }
 
     @Override
-    public Map<String,  Object> senderList(String senderId, String date) throws SQLException {
+    public Map<String,  Object> getCompliments(String senderId, Date date) throws SQLException {
         Map<String, Object> response = new HashMap<>();
         List<Compliment> senderList = dao.senderList(senderId, date);
         response.put("list", senderList);

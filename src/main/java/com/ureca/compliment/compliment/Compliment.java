@@ -1,6 +1,6 @@
 package com.ureca.compliment.compliment;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Compliment {
     private String id;
@@ -8,8 +8,7 @@ public class Compliment {
     private String receiverId;
     private String content;
     private boolean isAnonymous;
-    private LocalDateTime createdAt;
-    private String date;
+    private Date createdAt;
 
     public Compliment(String id, String senderId, String receiverId, String content, boolean isAnonymous) {
         this.id = id;
@@ -59,19 +58,11 @@ public class Compliment {
         isAnonymous = anonymous;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }

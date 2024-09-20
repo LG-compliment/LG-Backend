@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -46,7 +47,8 @@ public class ComplimentDAOImpl implements ComplimentDAO{
     }
 
     @Override
-    public List<Compliment> senderList(String senderId, String date) throws SQLException {
+    public List<Compliment> senderList(String senderId, Date date) throws SQLException {
+        
         Connection connection = dbUtil.getConnection();
         String sql = """
             SELECT * FROM COMPLIMENT WHERE SENDER_ID = ?
@@ -55,7 +57,7 @@ public class ComplimentDAOImpl implements ComplimentDAO{
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, senderId);
-            preparedStatement.setString(2, date);
+            preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
             ResultSet resultSet =  preparedStatement.executeQuery();
             List<Compliment> compliments = new ArrayList<>();
             while(resultSet.next()){
