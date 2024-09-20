@@ -9,5 +9,10 @@ import java.util.List;
 public interface ComplimentDAO {
     int insertCompliment(Compliment compliment) throws SQLException;
 
-    List<Compliment> senderList(String senderId, Date date) throws SQLException;
+    List<Compliment> findAll() throws SQLException;
+    List<Compliment> findBySenderIdAndDate(String senderId, Date date) throws SQLException;
+
+    List<Compliment> findBySenderId(String senderId) throws SQLException;
+
+    List<Compliment> findByDate(Date date) throws SQLException;
 }

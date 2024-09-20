@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -45,12 +46,12 @@ public class ComplimentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> senderList(
+    public ResponseEntity<?> list(
             @RequestParam(required = false) String senderId,
             @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date
     ) throws SQLException{
-        Map<String, Object> data = service.getCompliments(senderId, date);
-        ResponseWrapper<Map<String, Object>> response = new ResponseWrapper<>(
+        Map<String, List<Compliment>> data = service.getCompliments(senderId, date);
+        ResponseWrapper<Map<String, List<Compliment>>> response = new ResponseWrapper<>(
                 String.valueOf(HttpStatus.OK.value()),  // Status code as a string
                 HttpStatus.OK.getReasonPhrase(),  // "OK"
                 data
