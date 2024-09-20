@@ -26,7 +26,7 @@ public class ComplimentServiceImpl implements ComplimentService{
         compliment.setId(UUID.randomUUID().toString());
         
         Map<String, Integer> response = new HashMap<>();
-        int insert = dao.insertcompliment(compliment);
+        int insert = dao.insertCompliment(compliment);
         response.put("insert", insert);
         return response;
     }

@@ -19,7 +19,7 @@ public class ComplimentDAOImpl implements ComplimentDAO{
     DBUtil dbUtil;
 
     @Override
-    public int insertcompliment(Compliment compliment) throws SQLException {
+    public int insertCompliment(Compliment compliment) throws SQLException {
         Connection connection = dbUtil.getConnection();
         String sql = """
                     INSERT INTO COMPLIMENT(ID, SENDER_ID, RECEIVER_ID, CONTENT, IS_ANONYMOUS) 
