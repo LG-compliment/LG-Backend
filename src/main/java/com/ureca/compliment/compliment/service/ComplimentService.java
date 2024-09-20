@@ -4,9 +4,11 @@ import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.compliment.exceptions.ComplimentAlreadyExistsException;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface ComplimentService {
     Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException;
-    Map<String, Object> senderList(String senderId, String date) throws SQLException;
+    Map<String, List<Compliment>> getCompliments(String senderId, Date date) throws SQLException;
 }

@@ -5,12 +5,15 @@ import com.ureca.compliment.compliment.exceptions.ComplimentAlreadyExistsExcepti
 import com.ureca.compliment.compliment.service.ComplimentService;
 import com.ureca.compliment.util.response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -43,10 +46,12 @@ public class ComplimentController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> senderList(@RequestParam("senderId") String senderId,
-                                      @RequestParam("date") String date) throws SQLException{
-        Map<String, Object> data = service.senderList(senderId, date);
-        ResponseWrapper<Map<String, Object>> response = new ResponseWrapper<>(
+    public ResponseEntity<?> list(
+            @RequestParam(required = false) String senderId,
+            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date
+    ) throws SQLException{
+        Map<String, List<Compliment>> data = service.getCompliments(senderId, date);
+        ResponseWrapper<Map<String, List<Compliment>>> response = new ResponseWrapper<>(
                 String.valueOf(HttpStatus.OK.value()),  // Status code as a string
                 HttpStatus.OK.getReasonPhrase(),  // "OK"
                 data

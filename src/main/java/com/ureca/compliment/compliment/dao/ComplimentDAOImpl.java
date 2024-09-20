@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -19,7 +20,7 @@ public class ComplimentDAOImpl implements ComplimentDAO{
     DBUtil dbUtil;
 
     @Override
-    public int insertComplimnet(Compliment compliment) throws SQLException {
+    public int insertCompliment(Compliment compliment) throws SQLException {
         Connection connection = dbUtil.getConnection();
         String sql = """
                     INSERT INTO COMPLIMENT(ID, SENDER_ID, RECEIVER_ID, CONTENT, IS_ANONYMOUS) 
@@ -46,7 +47,35 @@ public class ComplimentDAOImpl implements ComplimentDAO{
     }
 
     @Override
-    public List<Compliment> senderList(String senderId, String date) throws SQLException {
+    public List<Compliment> findAll() throws SQLException {
+        Connection connection = dbUtil.getConnection();
+        String sql = "SELECT * FROM COMPLIMENT";
+
+        List<Compliment> compliments = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                compliments.add(new Compliment(
+                        resultSet.getString("id"),
+                        resultSet.getString("sender_id"),
+                        resultSet.getString("receiver_id"),
+                        resultSet.getString("content"),
+                        resultSet.getBoolean("is_anonymous")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return compliments;
+    }
+
+    @Override
+    public List<Compliment> findBySenderIdAndDate(String senderId, Date date) throws SQLException {
+        
         Connection connection = dbUtil.getConnection();
         String sql = """
             SELECT * FROM COMPLIMENT WHERE SENDER_ID = ?
@@ -55,7 +84,7 @@ public class ComplimentDAOImpl implements ComplimentDAO{
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setString(1, senderId);
-            preparedStatement.setString(2, date);
+            preparedStatement.setDate(2, new java.sql.Date(date.getTime()));
             ResultSet resultSet =  preparedStatement.executeQuery();
             List<Compliment> compliments = new ArrayList<>();
             while(resultSet.next()){
@@ -76,4 +105,61 @@ public class ComplimentDAOImpl implements ComplimentDAO{
         }
         return null;
     }
+
+    @Override
+    public List<Compliment> findBySenderId(String senderId) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+        String sql = "SELECT * FROM COMPLIMENT WHERE SENDER_ID = ?";
+
+        List<Compliment> compliments = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, senderId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                compliments.add(new Compliment(
+                        resultSet.getString("id"),
+                        resultSet.getString("sender_id"),
+                        resultSet.getString("receiver_id"),
+                        resultSet.getString("content"),
+                        resultSet.getBoolean("is_anonymous")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return compliments;
+    }
+
+    @Override
+    public List<Compliment> findByDate(Date date) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+        String sql = "SELECT * FROM COMPLIMENT WHERE DATE(CREATED_AT) = ?";
+
+        List<Compliment> compliments = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setDate(1, new java.sql.Date(date.getTime()));  // java.util.Date -> java.sql.Date 변환
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                compliments.add(new Compliment(
+                        resultSet.getString("id"),
+                        resultSet.getString("sender_id"),
+                        resultSet.getString("receiver_id"),
+                        resultSet.getString("content"),
+                        resultSet.getBoolean("is_anonymous")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return compliments;
+    }
+
 }
