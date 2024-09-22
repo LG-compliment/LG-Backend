@@ -56,13 +56,15 @@ public class ComplimentDAOImpl implements ComplimentDAO{
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                compliments.add(new Compliment(
+                Compliment compliment = new Compliment(
                         resultSet.getString("id"),
                         resultSet.getString("sender_id"),
                         resultSet.getString("receiver_id"),
                         resultSet.getString("content"),
                         resultSet.getBoolean("is_anonymous")
-                ));
+                );
+                compliment.setCreatedAt(resultSet.getDate("created_at"));
+                compliments.add(compliment);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,13 +90,15 @@ public class ComplimentDAOImpl implements ComplimentDAO{
             ResultSet resultSet =  preparedStatement.executeQuery();
             List<Compliment> compliments = new ArrayList<>();
             while(resultSet.next()){
-                compliments.add(new Compliment(
-                    resultSet.getString("id"),
-                    resultSet.getString("sender_id"),
-                    resultSet.getString("receiver_id"),
-                    resultSet.getString("content"),
-                    resultSet.getBoolean("is_anonymous")
-                ));
+                Compliment compliment = new Compliment(
+                        resultSet.getString("id"),
+                        resultSet.getString("sender_id"),
+                        resultSet.getString("receiver_id"),
+                        resultSet.getString("content"),
+                        resultSet.getBoolean("is_anonymous")
+                );
+                compliment.setCreatedAt(resultSet.getDate("created_at"));
+                compliments.add(compliment);
             }
             return compliments;
 
@@ -117,13 +121,15 @@ public class ComplimentDAOImpl implements ComplimentDAO{
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                compliments.add(new Compliment(
+                Compliment compliment = new Compliment(
                         resultSet.getString("id"),
                         resultSet.getString("sender_id"),
                         resultSet.getString("receiver_id"),
                         resultSet.getString("content"),
                         resultSet.getBoolean("is_anonymous")
-                ));
+                );
+                compliment.setCreatedAt(resultSet.getDate("created_at"));
+                compliments.add(compliment);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -145,13 +151,15 @@ public class ComplimentDAOImpl implements ComplimentDAO{
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                compliments.add(new Compliment(
+                Compliment compliment = new Compliment(
                         resultSet.getString("id"),
                         resultSet.getString("sender_id"),
                         resultSet.getString("receiver_id"),
                         resultSet.getString("content"),
                         resultSet.getBoolean("is_anonymous")
-                ));
+                );
+                compliment.setCreatedAt(resultSet.getDate("created_at"));
+                compliments.add(compliment);
             }
         } catch (SQLException e) {
             e.printStackTrace();

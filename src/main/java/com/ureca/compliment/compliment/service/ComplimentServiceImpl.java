@@ -2,18 +2,26 @@ package com.ureca.compliment.compliment.service;
 
 import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.compliment.dao.ComplimentDAO;
+import com.ureca.compliment.compliment.dto.ComplimentDTO;
 import com.ureca.compliment.compliment.exceptions.ComplimentAlreadyExistsException;
+import com.ureca.compliment.compliment.mapper.ComplimentMapper;
+import com.ureca.compliment.user.dto.UserDTO;
+import com.ureca.compliment.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ComplimentServiceImpl implements ComplimentService{
     @Autowired
     ComplimentDAO dao;
+
+    @Autowired
+    UserService userService;
 
     @Override
     public Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException {
@@ -33,7 +41,7 @@ public class ComplimentServiceImpl implements ComplimentService{
     }
 
     @Override
-    public Map<String, List<Compliment>> getCompliments(String senderId, Date date) throws SQLException {
+    public Map<String, List<ComplimentDTO>> getCompliments(String senderId, Date date, boolean includeUser) throws SQLException {
         List<Compliment> compliments;
 
         if (senderId != null && date != null) {
@@ -45,8 +53,32 @@ public class ComplimentServiceImpl implements ComplimentService{
         } else {
             compliments = dao.findAll(); 
         }
-        Map<String, List<Compliment>> data = new HashMap<>();
-        data.put("compliments", compliments);
-        return data;
+
+        Map<String, List<ComplimentDTO>> result = new HashMap<>();
+
+        if (includeUser) {
+            Set<String> userIds = Stream.concat(
+                    compliments.stream().map(Compliment::getSenderId), // senderId 스트림
+                    compliments.stream().map(Compliment::getReceiverId) // receiverId 스트림
+            ).collect(Collectors.toSet()); // 두 스트림을 합친 후 Set으로 수집
+
+            List<UserDTO> users = userService.getUsersByIds(userIds);
+            Map<String, UserDTO> userMap = users.stream()
+                    .collect(Collectors.toMap(UserDTO::getId, user -> user));
+
+            for (Compliment compliment : compliments) {
+                UserDTO sender = userMap.get(compliment.getSenderId());
+                UserDTO receiver = userMap.get(compliment.getReceiverId());
+                ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, sender, receiver);
+                result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
+            }
+        } else {
+            for (Compliment compliment : compliments) {
+                ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, null, null);
+                result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
+            }
+        }
+
+        return result;
     }
 }
