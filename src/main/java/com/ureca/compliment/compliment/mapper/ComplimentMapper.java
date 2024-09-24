@@ -13,13 +13,8 @@ public class ComplimentMapper {
                  compliment.isAnonymous(),
                  compliment.getCreatedAt()
          );
-         if (sender == null || receiver == null) {
-             complimentDTO.setSenderId(compliment.getSenderId());
-             complimentDTO.setReceiverId(compliment.getReceiverId());
-         } else {
-             complimentDTO.setSender(sender);
-             complimentDTO.setReceiver(receiver);
-         }
+         complimentDTO.setSender(sender);
+         complimentDTO.setReceiver(receiver);
          return complimentDTO;
     }
 }

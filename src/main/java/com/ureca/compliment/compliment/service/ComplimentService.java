@@ -11,5 +11,5 @@ import java.util.Map;
 
 public interface ComplimentService {
     Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException;
-    Map<String, List<ComplimentDTO>> getCompliments(String senderId, Date date, boolean includeUser) throws SQLException;
+    Map<String, List<ComplimentDTO>> getCompliments(String senderId, Date date) throws SQLException;
 }

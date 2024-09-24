@@ -41,7 +41,7 @@ public class ComplimentServiceImpl implements ComplimentService{
     }
 
     @Override
-    public Map<String, List<ComplimentDTO>> getCompliments(String senderId, Date date, boolean includeUser) throws SQLException {
+    public Map<String, List<ComplimentDTO>> getCompliments(String senderId, Date date) throws SQLException {
         List<Compliment> compliments;
 
         if (senderId != null && date != null) {
@@ -56,27 +56,18 @@ public class ComplimentServiceImpl implements ComplimentService{
 
         Map<String, List<ComplimentDTO>> result = new HashMap<>();
 
-        if (includeUser) {
-            Set<String> userIds = Stream.concat(
-                    compliments.stream().map(Compliment::getSenderId), // senderId 스트림
-                    compliments.stream().map(Compliment::getReceiverId) // receiverId 스트림
-            ).collect(Collectors.toSet()); // 두 스트림을 합친 후 Set으로 수집
-
-            List<UserDTO> users = userService.getUsersByIds(userIds);
-            Map<String, UserDTO> userMap = users.stream()
-                    .collect(Collectors.toMap(UserDTO::getId, user -> user));
-
-            for (Compliment compliment : compliments) {
-                UserDTO sender = userMap.get(compliment.getSenderId());
-                UserDTO receiver = userMap.get(compliment.getReceiverId());
-                ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, sender, receiver);
-                result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
-            }
-        } else {
-            for (Compliment compliment : compliments) {
-                ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, null, null);
-                result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
-            }
+        Set<String> userIds = Stream.concat(
+                compliments.stream().map(Compliment::getSenderId), // senderId 스트림
+                compliments.stream().map(Compliment::getReceiverId) // receiverId 스트림
+        ).collect(Collectors.toSet()); // 두 스트림을 합친 후 Set으로 수집
+        List<UserDTO> users = userService.getUsersByIds(userIds);
+        Map<String, UserDTO> userMap = users.stream()
+                .collect(Collectors.toMap(UserDTO::getId, user -> user));
+        for (Compliment compliment : compliments) {
+            UserDTO sender = userMap.get(compliment.getSenderId());
+            UserDTO receiver = userMap.get(compliment.getReceiverId());
+            ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, sender, receiver);
+            result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
         }
 
         return result;

@@ -49,10 +49,9 @@ public class ComplimentController {
     @GetMapping("")
     public ResponseEntity<?> list(
             @RequestParam(required = false) String senderId,
-            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date,
-            @RequestParam(required = false) boolean includeUser
+            @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date
     ) throws SQLException{
-        Map<String, List<ComplimentDTO>> data = service.getCompliments(senderId, date, includeUser);
+        Map<String, List<ComplimentDTO>> data = service.getCompliments(senderId, date);
         ResponseWrapper<Map<String, List<ComplimentDTO>>> response = new ResponseWrapper<>(
                 String.valueOf(HttpStatus.OK.value()),  // Status code as a string
                 HttpStatus.OK.getReasonPhrase(),  // "OK"
@@ -60,5 +59,4 @@ public class ComplimentController {
         );
         return ResponseEntity.ok().body(response);
     }
-
 }
