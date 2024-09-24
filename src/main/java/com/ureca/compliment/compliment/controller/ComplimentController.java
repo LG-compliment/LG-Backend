@@ -1,6 +1,7 @@
 package com.ureca.compliment.compliment.controller;
 
 import com.ureca.compliment.compliment.Compliment;
+import com.ureca.compliment.compliment.dto.ComplimentDTO;
 import com.ureca.compliment.compliment.exceptions.ComplimentAlreadyExistsException;
 import com.ureca.compliment.compliment.service.ComplimentService;
 import com.ureca.compliment.util.response.ResponseWrapper;
@@ -50,13 +51,12 @@ public class ComplimentController {
             @RequestParam(required = false) String senderId,
             @RequestParam(required = false) @DateTimeFormat(pattern="yyyy-MM-dd") Date date
     ) throws SQLException{
-        Map<String, List<Compliment>> data = service.getCompliments(senderId, date);
-        ResponseWrapper<Map<String, List<Compliment>>> response = new ResponseWrapper<>(
+        Map<String, List<ComplimentDTO>> data = service.getCompliments(senderId, date);
+        ResponseWrapper<Map<String, List<ComplimentDTO>>> response = new ResponseWrapper<>(
                 String.valueOf(HttpStatus.OK.value()),  // Status code as a string
                 HttpStatus.OK.getReasonPhrase(),  // "OK"
                 data
         );
         return ResponseEntity.ok().body(response);
     }
-
 }

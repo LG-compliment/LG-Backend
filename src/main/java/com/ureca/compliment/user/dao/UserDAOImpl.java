@@ -11,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class UserDAOImpl implements UserDAO{
@@ -81,6 +83,48 @@ public class UserDAOImpl implements UserDAO{
             connection.close();
         }
         return null;
+    }
+
+    @Override
+    public List<User> selectUsersByIds(Set<String> ids) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String placeholders = String.join(",", Collections.nCopies(ids.size(), "?"));
+        String sql = """
+        SELECT
+            *
+        FROM USER
+        WHERE id IN (%s);
+    """.formatted(placeholders);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            int index = 1;
+            for (String id : ids) {
+                preparedStatement.setString(index++, id);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<User> users = new ArrayList<>();
+            while (resultSet.next()) {
+                users.add(new User(
+                        resultSet.getString("id"),
+                        resultSet.getString("username"),
+                        "",
+                        resultSet.getDate("created_at"),
+                        resultSet.getDate("updated_at")
+                ));
+            }
+            return users;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e; // SQLException을 다시 던져서 호출한 쪽에서 처리하게 할 수도 있음.
+        } finally {
+            connection.close();
+        }
     }
 
     @Override

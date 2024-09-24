@@ -3,8 +3,10 @@ package com.ureca.compliment.user.service;
 import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.user.User;
 import com.ureca.compliment.user.dao.UserDAO;
+import com.ureca.compliment.user.dto.UserDTO;
 import com.ureca.compliment.user.exceptions.UserNotFoundException;
 
+import com.ureca.compliment.user.mapper.UserMapper;
 import com.ureca.compliment.util.auth.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -50,6 +53,16 @@ public class UserServiceImpl implements UserService {
             Map<String, Object> response = new java.util.HashMap<>();
             response.put("name", user.getName());
             return response;
+    }
+
+    @Override
+    public List<UserDTO> getUsersByIds(Set<String> userIds) throws SQLException {
+        try {
+            List<User> users = dao.selectUsersByIds(userIds);
+            return UserMapper.toDTOList(users);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     @Override
