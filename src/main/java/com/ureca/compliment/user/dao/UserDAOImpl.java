@@ -157,4 +157,29 @@ public class UserDAOImpl implements UserDAO{
         }
         return null;
     }
+
+    @Override
+    public void saveUser(User user) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+
+        String sql = """
+        INSERT INTO USER (id, username, password, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?);
+    """;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, user.getId());
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setDate(4, new java.sql.Date(user.getCreatedAt().getTime()));
+            preparedStatement.setDate(5, new java.sql.Date(user.getUpdatedAt().getTime()));
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException();
+        } finally {
+            connection.close();
+        }
+    }
 }

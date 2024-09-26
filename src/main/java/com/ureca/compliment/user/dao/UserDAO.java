@@ -10,6 +10,8 @@ import java.util.Set;
 public interface UserDAO {
     User selectUserByIdAndPassword(String id, String password) throws SQLException, UserNotFoundException;
     User selectUserById(String id) throws SQLException, UserNotFoundException;
+
     List<User> selectUsersByIds(Set<String> ids) throws SQLException;
     List<User> selectAllUsers() throws SQLException;
+    void saveUser(User user) throws SQLException;
 }

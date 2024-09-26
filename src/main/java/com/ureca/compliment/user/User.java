@@ -18,6 +18,14 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public User(String id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
     public String getId() {
         return id;
     }

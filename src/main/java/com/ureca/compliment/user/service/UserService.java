@@ -13,6 +13,8 @@ import java.util.Set;
 
 public interface UserService {
     Map<String, Object> logIn(String id, String password) throws SQLException;
+    void signUp(String id, String name, String password) throws SQLException;
+
     Map<String, Object> getAllUsers() throws SQLException;
     Map<String, Object> getUser(String id) throws SQLException, UserNotFoundException;
     List<UserDTO>  getUsersByIds(Set<String> userIds) throws  SQLException;
