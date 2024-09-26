@@ -97,4 +97,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(errorResponse);
         }
     }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<?> checkId(@RequestParam(required = false) String id) throws UserNotFoundException, SQLException {
+        Map<String, Object> data = userService.checkUserId(id);
+        ResponseWrapper<Map<String, Object>> response = new ResponseWrapper<>(
+            String.valueOf(HttpStatus.OK.value()),  // Status code as a string
+            HttpStatus.OK.getReasonPhrase(),  // "OK"
+            data  // Data from userService
+        );
+        return ResponseEntity.ok().body(response);
+    }
 }

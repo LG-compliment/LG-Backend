@@ -17,6 +17,7 @@ public interface UserService {
 
     Map<String, Object> getAllUsers() throws SQLException;
     Map<String, Object> getUser(String id) throws SQLException, UserNotFoundException;
+    Map<String, Object> checkUserId(String id) throws SQLException, UserNotFoundException;
     List<UserDTO>  getUsersByIds(Set<String> userIds) throws  SQLException;
     List<Compliment> getCompliments(String id) throws SQLException;
 }

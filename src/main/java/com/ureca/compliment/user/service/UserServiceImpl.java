@@ -76,6 +76,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Map<String, Object> checkUserId(String id) throws SQLException, UserNotFoundException {
+        Map<String, Object> response = new java.util.HashMap<>();
+
+        try {
+            dao.selectUserById(id);
+            response.put("available", true);   // ID가 사용 가능함
+        } catch (UserNotFoundException e) {
+            response.put("available", false);  // ID가 중복됨
+        }
+        return response;
+    }
+
+    @Override
     public List<UserDTO> getUsersByIds(Set<String> userIds) throws SQLException {
         try {
             List<User> users = dao.selectUsersByIds(userIds);
