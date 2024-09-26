@@ -67,7 +67,7 @@ public class ComplimentServiceImpl implements ComplimentService{
         Map<String, UserDTO> userMap = users.stream()
                 .collect(Collectors.toMap(UserDTO::getId, user -> user));
         for (Compliment compliment : compliments) {
-            UserDTO sender = userMap.get(compliment.getSenderId());
+            UserDTO sender = compliment.isAnonymous() ? null : userMap.get(compliment.getSenderId());
             UserDTO receiver = userMap.get(compliment.getReceiverId());
             ComplimentDTO complimentDTO = ComplimentMapper.toDTO(compliment, sender, receiver);
             result.computeIfAbsent("compliments", k -> new ArrayList<>()).add(complimentDTO);
