@@ -134,7 +134,8 @@ public class UserDAOImpl implements UserDAO{
         String sql = """
             SELECT
                 *
-            FROM USER;
+            FROM USER
+            ORDER BY USERNAME;
         """;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
