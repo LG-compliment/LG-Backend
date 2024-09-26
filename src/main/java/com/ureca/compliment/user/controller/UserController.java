@@ -1,5 +1,6 @@
 package com.ureca.compliment.user.controller;
 
+import com.ureca.compliment.user.User;
 import com.ureca.compliment.user.exceptions.UserNotFoundException;
 import com.ureca.compliment.user.service.UserService;
 import com.ureca.compliment.util.auth.JwtUtil;
@@ -64,5 +65,47 @@ public class UserController {
             );
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<?> signUp(@RequestBody Map<String, String> signUpRequest) {
+        String id = signUpRequest.get("id");
+        String name = signUpRequest.get("name");
+        String password = signUpRequest.get("password");
+
+        try {
+            userService.signUp(id, name, password);
+            ResponseWrapper<String> successResponse = new ResponseWrapper<>(
+                    String.valueOf(HttpStatus.CREATED.value()),
+                    HttpStatus.CREATED.getReasonPhrase(),
+                    "회원가입이 성공적으로 완료되었습니다."
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
+        } catch (SQLException e) {
+            ResponseWrapper<String> errorResponse = new ResponseWrapper<>(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                    "회원가입 중 오류가 발생했습니다: " + e.getMessage(),
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        } catch (Exception e) {
+            ResponseWrapper<String> errorResponse = new ResponseWrapper<>(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),
+                    "회원가입 요청을 처리할 수 없습니다: " + e.getMessage(),
+                    null
+            );
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<?> checkId(@RequestParam(required = false) String id) throws UserNotFoundException, SQLException {
+        Map<String, Object> data = userService.checkUserId(id);
+        ResponseWrapper<Map<String, Object>> response = new ResponseWrapper<>(
+            String.valueOf(HttpStatus.OK.value()),  // Status code as a string
+            HttpStatus.OK.getReasonPhrase(),  // "OK"
+            data  // Data from userService
+        );
+        return ResponseEntity.ok().body(response);
     }
 }
