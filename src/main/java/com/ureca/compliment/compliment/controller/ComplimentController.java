@@ -42,6 +42,13 @@ public class ComplimentController {
                     null
             );
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        } catch (IllegalArgumentException ie){
+            ResponseWrapper<String> errorResponse = new ResponseWrapper<>(
+                    String.valueOf(HttpStatus.BAD_REQUEST.value()),  // 400 status code
+                    ie.getMessage(),  // Error message
+                    null
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
     }
