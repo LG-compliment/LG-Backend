@@ -25,6 +25,9 @@ public class ComplimentServiceImpl implements ComplimentService{
 
     @Override
     public Map<String, Integer> create(Compliment compliment) throws SQLException, ComplimentAlreadyExistsException {
+        if(Objects.equals(compliment.getSenderId(), compliment.getReceiverId())){
+            throw new IllegalArgumentException("Compliments cannot be sent to yourself");
+        }
         List<Compliment> senderList = dao.findBySenderIdAndDate(compliment.getSenderId(), compliment.getCreatedAt());
 
         if (!senderList.isEmpty()) {
