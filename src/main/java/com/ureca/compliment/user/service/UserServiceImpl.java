@@ -81,9 +81,9 @@ public class UserServiceImpl implements UserService {
 
         try {
             dao.selectUserById(id);
-            response.put("available", true);   // ID가 사용 가능함
+            response.put("available", false); // ID가 중복됨
         } catch (UserNotFoundException e) {
-            response.put("available", false);  // ID가 중복됨
+            response.put("available", true); // ID가 사용 가능함
         }
         return response;
     }
