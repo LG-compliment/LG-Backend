@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class UserDAOImpl implements UserDAO{
@@ -76,6 +73,39 @@ public class UserDAOImpl implements UserDAO{
                 );
             } else {
                 throw new UserNotFoundException("User with ID" + id + " not found");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<User> findBySlackId(String id) throws SQLException, UserNotFoundException {
+        Connection connection = dbUtil.getConnection();
+
+        String sql = """
+            SELECT
+                *
+            FROM USER
+            WHERE slack_id = ?;
+        """;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(new User(
+                        resultSet.getString("id"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getDate("created_at"),
+                        resultSet.getDate("updated_at")
+                ));
+            } else {
+                return Optional.empty();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -179,6 +209,54 @@ public class UserDAOImpl implements UserDAO{
         } catch (SQLException e) {
             e.printStackTrace();
             throw new SQLException();
+        } finally {
+            connection.close();
+        }
+    }
+
+    public void save(User user) throws SQLException {
+        Connection connection = dbUtil.getConnection();
+
+        String sqlSelect = "SELECT COUNT(*) FROM USER WHERE id = ?;";
+        String sqlInsert = """
+        INSERT INTO USER (id, username, password, created_at, updated_at, slack_id)
+        VALUES (?, ?, ?, ?, ?, ?);
+    """;
+        String sqlUpdate = """
+        UPDATE USER
+        SET username = ?, password = ?, updated_at = ?, slack_id = ?
+        WHERE id = ?;
+    """;
+
+        try (PreparedStatement selectStatement = connection.prepareStatement(sqlSelect)) {
+            selectStatement.setString(1, user.getId());
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next() && resultSet.getInt(1) > 0) {
+                // User exists, perform UPDATE
+                try (PreparedStatement updateStatement = connection.prepareStatement(sqlUpdate)) {
+                    updateStatement.setString(1, user.getName());
+                    updateStatement.setString(2, user.getPassword());
+                    updateStatement.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+                    updateStatement.setString(4, user.getSlackId());
+                    updateStatement.setString(5, user.getId());
+                    updateStatement.executeUpdate();
+                }
+            } else {
+                // User does not exist, perform INSERT
+                try (PreparedStatement insertStatement = connection.prepareStatement(sqlInsert)) {
+                    insertStatement.setString(1, user.getId());
+                    insertStatement.setString(2, user.getName());
+                    insertStatement.setString(3, user.getPassword());
+                    insertStatement.setDate(4, new java.sql.Date(user.getCreatedAt().getTime()));
+                    insertStatement.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+                    insertStatement.setString(6, user.getSlackId());
+                    insertStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error saving user to database");
         } finally {
             connection.close();
         }

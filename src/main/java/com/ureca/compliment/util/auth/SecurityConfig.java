@@ -1,5 +1,7 @@
 package com.ureca.compliment.util.auth;
 
+import com.ureca.compliment.user.dao.UserDAOImpl;
+import com.ureca.compliment.util.auth.service.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,9 +27,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final OAuth2AuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, OAuth2AuthenticationSuccessHandler successHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.successHandler = successHandler;
     }
 
     /**
@@ -46,13 +50,22 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("api/users/login", "api/users/sign-up", "api/users/check-id").permitAll()
+                        .requestMatchers("api/users/login", "api/users/sign-up", "api/users/check-id",  "api/oauth2/**", "api/login/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(successHandler)
+                        .failureHandler((request, response, exception) -> {
+                            // 로그를 추가하여 실패 원인을 파악
+                            exception.printStackTrace();
+                            response.sendRedirect("http://127.0.0.1:3000/login");
+                        })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .cors(Customizer.withDefaults());
 
         return http.build();

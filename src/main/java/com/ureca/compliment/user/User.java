@@ -2,9 +2,11 @@ package com.ureca.compliment.user;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 public class User {
     private String id;
+    private String slackId;
     private String name;
     private String password;
     private Date createdAt;
@@ -18,10 +20,18 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+<<<<<<< HEAD
     public User(String id, String name, String password) {
         this.id = id;
         this.name = name;
         this.password = password;
+=======
+    // UUID를 생성하여 User 객체 생성
+    public User(String name) {
+        this.id = UUID.randomUUID().toString();
+        this.name = name;
+        this.password = ""; // OAuth 사용 시 패스워드는 빈 값 또는 기본값 설정
+>>>>>>> ddf5994 (🚧 Feat: Slack Oauth)
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }
@@ -32,6 +42,15 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+
+    public String getSlackId() {
+        return slackId;
+    }
+
+    public void setSlackId(String slackId) {
+        this.slackId = slackId;
     }
 
     public String getName() {
