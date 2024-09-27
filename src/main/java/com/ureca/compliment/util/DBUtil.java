@@ -1,5 +1,7 @@
 package com.ureca.compliment.util;
 
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -8,11 +10,10 @@ import java.sql.SQLException;
 
 @Component
 public class DBUtil {
-    private final String driverName = "com.mysql.cj.jdbc.Driver";
-    private final String url = "jdbc:mysql://127.0.0.1:3306/ureca?serverTimezone=Asia/Seoul";
-    private final String user = "ureca";
-    private final String pass = "toor";
+    @Autowired
+    private Dotenv dotenv;
 
+    private final String driverName = "com.mysql.cj.jdbc.Driver";
     private static DBUtil instance = new DBUtil();
 
     private DBUtil() {
@@ -28,7 +29,11 @@ public class DBUtil {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, pass);
+        final String dbHost = dotenv.get("DB_HOST");
+        final String dbUser = dotenv.get("DB_USER");
+        final String dbPassword = dotenv.get("DB_PASSWORD");
+
+        return DriverManager.getConnection(dbHost, dbUser, dbPassword);
     }
 
     public void close(AutoCloseable... closeables) {
