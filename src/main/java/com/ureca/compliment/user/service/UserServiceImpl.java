@@ -4,11 +4,14 @@ import com.ureca.compliment.compliment.Compliment;
 import com.ureca.compliment.user.User;
 import com.ureca.compliment.user.dao.UserDAO;
 import com.ureca.compliment.user.dto.UserDTO;
+import com.ureca.compliment.user.exceptions.InvalidCredentialsException;
 import com.ureca.compliment.user.exceptions.UserNotFoundException;
 
 import com.ureca.compliment.user.mapper.UserMapper;
 import com.ureca.compliment.util.auth.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +34,11 @@ public class UserServiceImpl implements UserService {
         try {
             Map<String, Object> response = new java.util.HashMap<>();
 
-            String token =  tokenService.generateToken(id, password);
+            String token = tokenService.generateToken(id, password);
             response.put("token", token);
             return response;
+        } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
+            throw new InvalidCredentialsException("Invalid username or password");
         } catch (Exception e) {
             throw new SQLException("Invalid credentials");
         }
