@@ -2,6 +2,8 @@ package com.ureca.compliment.util.auth;
 
 import com.ureca.compliment.user.dao.UserDAOImpl;
 import com.ureca.compliment.util.auth.service.OAuth2AuthenticationSuccessHandler;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +30,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final OAuth2AuthenticationSuccessHandler successHandler;
+
+    @Autowired
+    private Dotenv dotenv;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, OAuth2AuthenticationSuccessHandler successHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
@@ -57,11 +62,12 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/api/oauth2/authorization/slack")
                         .successHandler(successHandler)
                         .failureHandler((request, response, exception) -> {
                             // 로그를 추가하여 실패 원인을 파악
                             exception.printStackTrace();
-                            response.sendRedirect("http://127.0.0.1:3000/login");
+                            response.sendRedirect(dotenv.get("FRONT_PAGE_URL") + "/login");
                         })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

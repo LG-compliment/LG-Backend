@@ -4,9 +4,11 @@ import com.ureca.compliment.user.User;
 import com.ureca.compliment.user.dao.UserDAO;
 import com.ureca.compliment.user.exceptions.UserNotFoundException;
 import com.ureca.compliment.util.auth.JwtUtil;
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -20,6 +22,9 @@ import java.util.Map;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final UserDAO userDAO;
+
+    @Autowired
+    private Dotenv dotenv;
 
 
     public OAuth2AuthenticationSuccessHandler(JwtUtil jwtUtil, UserDAO userDAO) {
@@ -62,7 +67,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // JWT 토큰 생성 및 응답
         String token = jwtUtil.generateToken(user.getId());
         // JWT 토큰을 포함하여 프론트엔드로 리다이렉트
-        String redirectUrl = "http://127.0.0.1:3000/home?token=" + token;
+        String redirectUrl = dotenv.get("FRONT_PAGE_URL") + "/home?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
