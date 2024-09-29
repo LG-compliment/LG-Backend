@@ -20,18 +20,17 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-<<<<<<< HEAD
     public User(String id, String name, String password) {
         this.id = id;
         this.name = name;
         this.password = password;
-=======
+    }
+
     // UUID를 생성하여 User 객체 생성
     public User(String name) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.password = ""; // OAuth 사용 시 패스워드는 빈 값 또는 기본값 설정
->>>>>>> ddf5994 (🚧 Feat: Slack Oauth)
         this.createdAt = new Date();
         this.updatedAt = new Date();
     }

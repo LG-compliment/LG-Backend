@@ -29,13 +29,9 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         // CORS 설정을 담을 객체를 생성
         CorsConfiguration config = new CorsConfiguration();
-<<<<<<< HEAD
         config.setAllowedOrigins(List.of(
             "http://127.0.0.1:3000", "http://localhost:3000", Objects.requireNonNull(dotenv.get("CORS_HOST"))
         ));  // 허용할 출처 (여러 출처도 가능)
-=======
-        config.setAllowedOrigins(List.of("http://127.0.0.1:3000"));  // 허용할 출처 (여러 출처도 가능)
->>>>>>> ddf5994 (🚧 Feat: Slack Oauth)
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));  // 허용할 HTTP 메서드
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));  // 허용할 헤더
         config.setAllowCredentials(true);  // 자격 증명 (예: 쿠키) 허용 여부
