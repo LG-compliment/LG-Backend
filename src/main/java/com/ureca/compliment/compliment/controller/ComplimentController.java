@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/compliments")
+@RequestMapping("/api/compliments")
 public class ComplimentController {
     @Autowired
     ComplimentService service;

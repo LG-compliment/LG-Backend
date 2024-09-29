@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/achievements")
+@RequestMapping("/api/achievements")
 public class AchievementController {
     @Autowired
     AchievementService service;

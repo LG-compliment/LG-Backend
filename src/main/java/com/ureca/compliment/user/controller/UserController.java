@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserService userService;
