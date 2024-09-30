@@ -1,7 +1,5 @@
 package com.ureca.compliment.util.auth;
 
-import com.ureca.compliment.user.dao.UserDAOImpl;
-import com.ureca.compliment.util.auth.service.OAuth2AuthenticationSuccessHandler;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,9 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -33,14 +28,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final OAuth2AuthenticationSuccessHandler successHandler;
+    private final DefaultOAuth2UserService oAuth2UserService;
 
     @Autowired
     private Dotenv dotenv;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, OAuth2AuthenticationSuccessHandler successHandler) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, DefaultOAuth2UserService oAuth2UserService) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.successHandler = successHandler;
+        this.oAuth2UserService = oAuth2UserService;
     }
 
     /**
@@ -66,39 +61,12 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/api/oauth2/authorization/slack")
-                        .successHandler(successHandler)
-                        .failureHandler((request, response, exception) -> {
-                            // 로그를 추가하여 실패 원인을 파악
-                            exception.printStackTrace();
-                            response.sendRedirect(dotenv.get("FRONT_PAGE_URL") + "/login");
-                        })
-                        .authorizationEndpoint(authorizationEndpoint ->
-                                authorizationEndpoint.baseUri("/api/oauth2/authorization")
-                        )
-                        .redirectionEndpoint(redirectionEndpoint ->
-                                redirectionEndpoint.baseUri("/api/login/oauth2/code/*")
-                        ).userInfoEndpoint(userInfo -> userInfo
-                                .userService(this.oauth2UserService())
-                        )
+                                .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
+                                .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(Customizer.withDefaults());
         return http.build();
-    }
-
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
-        DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
-        return (userRequest) -> {
-            OAuth2User oauth2User = delegate.loadUser(userRequest);
-
-            System.out.println("😍");
-            System.out.println(oauth2User);
-
-            // Slack에서 받은 사용자 정보 처리 로직
-            return oauth2User;
-        };
     }
 
     /**
