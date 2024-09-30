@@ -69,6 +69,12 @@ public class SecurityConfig {
                             exception.printStackTrace();
                             response.sendRedirect(dotenv.get("FRONT_PAGE_URL") + "/login");
                         })
+                        .authorizationEndpoint(authorizationEndpoint ->
+                                authorizationEndpoint.baseUri("/api/oauth2/authorization")
+                        )
+                        .redirectionEndpoint(redirectionEndpoint ->
+                                redirectionEndpoint.baseUri("/api/login/oauth2/code/*")
+                        )
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 
