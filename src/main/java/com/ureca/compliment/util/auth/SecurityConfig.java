@@ -15,6 +15,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -74,13 +78,27 @@ public class SecurityConfig {
                         )
                         .redirectionEndpoint(redirectionEndpoint ->
                                 redirectionEndpoint.baseUri("/api/login/oauth2/code/*")
+                        ).userInfoEndpoint(userInfo -> userInfo
+                                .userService(this.oauth2UserService())
                         )
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .cors(Customizer.withDefaults());
-
         return http.build();
+    }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+        DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
+        return (userRequest) -> {
+            OAuth2User oauth2User = delegate.loadUser(userRequest);
+
+            System.out.println("😍");
+            System.out.println(oauth2User);
+
+            // Slack에서 받은 사용자 정보 처리 로직
+            return oauth2User;
+        };
     }
 
     /**
