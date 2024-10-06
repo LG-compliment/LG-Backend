@@ -31,6 +31,9 @@ public class SecurityConfig {
     private final DefaultOAuth2UserService oAuth2UserService;
 
     @Autowired
+    private CustomAuthenticationFailureHandler authenticationFailureHandler;
+
+    @Autowired
     private Dotenv dotenv;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, DefaultOAuth2UserService oAuth2UserService) {
@@ -61,6 +64,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .oauth2Login(oauth2 -> oauth2
+                                .failureHandler(authenticationFailureHandler)
                                 .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/callback/**"))
                                 .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
                 )
