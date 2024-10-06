@@ -24,7 +24,7 @@ import java.io.IOException;
             if (exception instanceof OAuth2AuthenticationException) {
                 OAuth2AuthenticationException oauth2AuthenticationException = (OAuth2AuthenticationException) exception;
                 OAuth2Error error = oauth2AuthenticationException.getError();
-                logger.error("OAuth2 authentication error: {}", error.getDescription());
+                logger.error("OAuth2 authentication error: {}", error);
                 // 여기에 추가적인 오류 정보 로깅
             }
             // 오류 응답 처리
