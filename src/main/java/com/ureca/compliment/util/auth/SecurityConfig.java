@@ -53,7 +53,7 @@ public class SecurityConfig {
      * - addFilterBefore: jwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가하여 JWT를 통한 인증을 처리합니다.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthorizationRequestRepository customAuthorizationRequestRepository) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -67,10 +67,6 @@ public class SecurityConfig {
                                 .failureHandler(authenticationFailureHandler)
                                 .redirectionEndpoint(endpoint -> endpoint.baseUri("/api/oauth2/callback/**"))
                                 .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
-                                .authorizationEndpoint(authorization ->
-                                    authorization
-                                        .authorizationRequestRepository(customAuthorizationRequestRepository) // Custom repository 설정
-                                )
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(Customizer.withDefaults());
